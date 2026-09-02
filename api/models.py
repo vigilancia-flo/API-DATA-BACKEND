@@ -1,0 +1,25 @@
+from django.db import models
+
+# Classe do Paciente
+class PacienteEndemia(models.Model):
+    numero_notificacao = models.CharField(max_length=50, null=True, blank=True)
+    nome_paciente = models.CharField(max_length=100, null=True, blank=True)
+    endereco = models.TextField(null=True, blank=True)
+    data_notificacao = models.DateField(null=True, blank=True)
+    data_pri_sintoma = models.DateField(null=True, blank=True)
+    data_nascimento = models.DateField(null=True, blank=True)
+    id_agravo = models.TextField(null=True, blank=True)
+    id_unidade = models.TextField(null=True, blank=True)
+    hospital = models.TextField(null=True, blank=True)
+    cs_sexo = models.TextField(null=True, blank=True)
+    classi_fin = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.numero_notificacao} - {self.nome_paciente}"
+
+class UploadDBF(models.Model):
+    arquivo = models.FileField(upload_to='dbfs/')
+    data_upload = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.arquivo}"
