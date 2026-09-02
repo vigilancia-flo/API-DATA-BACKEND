@@ -13,7 +13,12 @@ SECRET_KEY = 'django-insecure-_z5uyr8y3t%wfcz2d@3q0k+6a5=n=6w+5b7d*ms+m1@+4vje35
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
+    "api-data-sigma-lovat.vercel.app",
+]
 
 
 # Application definition
