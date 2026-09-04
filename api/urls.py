@@ -9,4 +9,5 @@ router.register(r'pacientes', views.PacienteEndemiaViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('api/casos_por_bairro/', views.casos_por_bairro, name='casos_por_bairro'),
 ]
