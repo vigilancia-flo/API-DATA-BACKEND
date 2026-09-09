@@ -28,7 +28,7 @@ class UploadDBFAdmin(admin.ModelAdmin):
             endereco_formatado = ", ".join(partes_validadas)
 
             # padrao maisculo, mesmo que ta tabela esteja em minusculo
-            EndemiasDengue.objects.create(
+            PacienteDengue.objects.create(
                 numero_notificacao=record.get('NU_NOTIFIC'),
                 nome_paciente=record.get('NM_PACIENT'),
                 data_notificacao=record.get('DT_NOTIFIC'),
