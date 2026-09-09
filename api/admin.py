@@ -1,10 +1,10 @@
 from django.contrib import admin
 from dbfread import DBF
-from .models import PacienteEndemia, UploadDBF
+from .models import PacienteDengue, UploadDBF
 
 
-@admin.register(PacienteEndemia)
-class PacienteEndemiaAdmin(admin.ModelAdmin):
+@admin.register(PacienteDengue)
+class PacienteDengueAdmin(admin.ModelAdmin):
     # mostra essas colunas na listagem do admin
     list_display = ("numero_notificacao", "nome_paciente", "data_notificacao", "endereco", "data_nascimento", "data_pri_sintoma", "id_agravo", "id_unidade", "hospital", "cs_sexo", "classi_fin")
     # essas colunas podem ser usadas como mecanismo de pesquisa
@@ -28,7 +28,7 @@ class UploadDBFAdmin(admin.ModelAdmin):
             endereco_formatado = ", ".join(partes_validadas)
 
             # padrao maisculo, mesmo que ta tabela esteja em minusculo
-            PacienteEndemia.objects.create(
+            EndemiasDengue.objects.create(
                 numero_notificacao=record.get('NU_NOTIFIC'),
                 nome_paciente=record.get('NM_PACIENT'),
                 data_notificacao=record.get('DT_NOTIFIC'),

@@ -1,7 +1,7 @@
 from django.db import models
 
 # Classe do Paciente
-class PacienteEndemia(models.Model):
+class PacienteDengue(models.Model):
     numero_notificacao = models.CharField(max_length=50, null=True, blank=True)
     nome_paciente = models.CharField(max_length=100, null=True, blank=True)
     endereco = models.TextField(null=True, blank=True)
