@@ -17,6 +17,14 @@ class PacienteDengue(models.Model):
     def __str__(self):
         return f"{self.numero_notificacao} - {self.nome_paciente}"
 
+class PacienteTuberculose(models.Model):
+    id_unidade = models.TextField(null=True, blank=True)
+    nm_ubs = models.TextField(null=True, blank=True)
+    nu_notific = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.nm_ubs} - {self.nu_notific}"
+
 class UploadDBF(models.Model):
     arquivo = models.FileField(upload_to='dbfs/')
     data_upload = models.DateField(null=True, blank=True)
