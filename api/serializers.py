@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
-from .models import PacienteDengue
+from .models import PacienteDengue, PacienteTuberculose
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -18,4 +18,9 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class PacienteDengueSerializer(serializers.ModelSerializer):
     class Meta:
         model = PacienteDengue
+        fields = "__all__"
+
+class PacienteTuberculoseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PacienteTuberculose
         fields = "__all__"

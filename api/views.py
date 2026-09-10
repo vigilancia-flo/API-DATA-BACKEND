@@ -3,11 +3,16 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Count
 from .models import PacienteDengue
-from .serializers import PacienteDengueSerializer
+from .serializers import PacienteDengueSerializer, PacienteTuberculose, PacienteTuberculoseSerializer
+
 
 class PacienteDengueViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PacienteDengue.objects.all()
     serializer_class = PacienteDengueSerializer
+
+class PacienteTuberculoseViewSet(viewsets.ModelViewSet):
+    queryset = PacienteTuberculose.objects.all()
+    serializer_class = PacienteTuberculoseSerializer
 
 @api_view(['GET'])
 def casos_por_bairro(request): # funcao para agrupar o campo bairro e contar os numeros de registros
