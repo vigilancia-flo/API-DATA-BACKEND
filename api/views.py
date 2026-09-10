@@ -3,7 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Count
 from .models import PacienteDengue
-from .serializers import PacienteDengueSerializer, PacienteTuberculose, PacienteTuberculoseSerializer
+from .serializers import PacienteDengueSerializer, PacienteTuberculoseSerializer
+from api.models import PacienteTuberculose
 
 
 class PacienteDengueViewSet(viewsets.ReadOnlyModelViewSet):
