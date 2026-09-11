@@ -1,12 +1,13 @@
 import os
-from api.models import PacienteDengue, PacienteTuberculose  # Importe os models certos
+from api.models import PacienteDengue, PacienteTuberculose, PacienteSifilis, PacienteViolenciaDomestica
 from dbfread import DBF
 from datetime import datetime
 
-# Dicionário mapeando a chave no nome do arquivo para o Model
 MAPEA_ENDEMIAS = {
     'dengon': PacienteDengue,
     'tubercu': PacienteTuberculose,
+    'sifi': PacienteSifilis,
+    'violencia': PacienteViolenciaDomestica,
 }
 
 
@@ -39,7 +40,6 @@ def processar_arquivo_dbf(caminho_arquivo):
 
     for record in tabela_dbf:
 
-        # LÓGICA PARA DENGUE
         if modelo_alvo == PacienteDengue:
             partes_endereco = [
                 record.get('NM_LOGRADO'),
@@ -66,19 +66,32 @@ def processar_arquivo_dbf(caminho_arquivo):
             )
             registros_para_salvar.append(nova_linha)
 
-        # LÓGICA PARA TUBERCULOSE
         elif modelo_alvo == PacienteTuberculose:
-            # OBS: Aqui você precisa garantir que os nomes dentro de record.get()
-            # são exatamente os nomes das colunas no arquivo .dbf de Tuberculose.
-            # Baseado no seu Model, coloquei alguns chutes comuns do SINAN:
             nova_linha = PacienteTuberculose(
                 id_unidade=record.get('ID_UNIDADE') or record.get('ID_UNID'),
-                nm_ubs=record.get('NM_UBS') or record.get('ID_UNIDADE'),  # Ajuste conforme a coluna no seu DBF
+                nm_ubs=record.get('NM_UBS') or record.get('ID_UNIDADE'),
                 nu_notific=record.get('NU_NOTIFIC') or record.get('NU_NOTIFICA'),
             )
             registros_para_salvar.append(nova_linha)
 
-    # 4. Salvar no banco de dados em lote
+        elif modelo_alvo == PacienteSifilis:
+            nova_linha = PacienteSifilis(
+                mu_notific=record.get('MU_NOTIFIC'),
+                un_saude=record.get('UN_SAUDE'),
+                nu_notific=record.get('NU_NOTIFIC'),
+                dt_notific=formatar_data(record.get('DT_NOTIFIC')),
+                id_agravo=record.get('ID_AGRAVO'),
+                nm_pacient=record.get('NM_PACIENT'),
+                nm_ubs=record.get('NM_UBS'),
+            )
+
+        elif modelo_alvo == PacienteViolenciaDomestica:
+            nova_linha = PacienteViolenciaDomestica(
+                id_unidade=record.get('ID_UNIDADE'),
+                nm_ubs=record.get('NM_UBS'),
+                nu_notific=record.get('NU_NOTIFIC'),
+            )
+
     modelo_alvo.objects.bulk_create(registros_para_salvar, ignore_conflicts=True)
 
     return {"status": "sucesso", "registros_inseridos": len(registros_para_salvar)}

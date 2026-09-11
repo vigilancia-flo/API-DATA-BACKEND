@@ -1,7 +1,7 @@
 import os
 from django.contrib import admin
 from dbfread import DBF
-from .models import PacienteDengue, PacienteTuberculose, UploadDBF
+from .models import PacienteDengue, PacienteTuberculose, PacienteSifilis,UploadDBF, PacienteViolenciaDomestica
 from datetime import datetime
 
 
@@ -17,13 +17,21 @@ class PacienteTuberculoseAdmin(admin.ModelAdmin):
     list_display = ("id_unidade", "nm_ubs", "nu_notific")
     search_fields = ("id_unidade", "nm_ubs", "nu_notific")
 
+@admin.register(PacienteSifilis)
+class PacienteSifilisAdmin(admin.ModelAdmin):
+    list_display = ("mu_notific", "un_saude", "nm_ubs", "mu_residen", "nu_notific", "dt_notific", "id_agravo", "nm_pacient")
+    search_fields = ("mu_notific", "un_saude", "nm_ubs", "mu_residen", "nu_notific", "dt_notific", "id_agravo", "nm_pacient")
+
+@admin.register(PacienteViolenciaDomestica)
+class PacienteViolenciaDomesticaAdmin(admin.ModelAdmin):
+    list_display = ("id_unidade", "nm_ubs", "nu_notific")
+    search_fields = ("id_unidade", "nm_ubs", "nu_notific")
 
 @admin.register(UploadDBF)
 class UploadDBFAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
 
-        # Pega o nome do arquivo enviado e deixa em minúsculo
         nome_arquivo = os.path.basename(obj.arquivo.name).lower()
 
         table = DBF(obj.arquivo.path, encoding='iso-8859-1', load=True, ignore_missing_memofile=True)
@@ -40,12 +48,12 @@ class UploadDBFAdmin(admin.ModelAdmin):
             except (ValueError, TypeError, AttributeError):
                 return None
 
-        # Listas para guardar os registros antes de salvar
         registros_dengue = []
         registros_tubercu = []
+        registros_sifi = []
+        registros_violencia = []
 
         for record in table:
-            # SE FOR DENGUE
             if 'deng' in nome_arquivo:
                 partes_endereco = [
                     record.get('NM_LOGRADO'),
@@ -72,7 +80,6 @@ class UploadDBFAdmin(admin.ModelAdmin):
                 )
                 registros_dengue.append(nova_linha)
 
-            # SE FOR TUBERCULOSE
             elif 'tubercu' in nome_arquivo:
                 nova_linha = PacienteTuberculose(
                     id_unidade=record.get('ID_UNIDADE') or record.get('ID_UNID'),
@@ -81,8 +88,32 @@ class UploadDBFAdmin(admin.ModelAdmin):
                 )
                 registros_tubercu.append(nova_linha)
 
-        # Salva todos os registros no banco de dados de uma vez só!
+            elif 'sifi' in nome_arquivo:
+                nova_linha = PacienteSifilis(
+                    mu_notific=record.get('MU_NOTIFIC'),
+                    un_saude=record.get('UN_SADE'),
+                    nm_ubs=record.get('NM_UBS') or record.get('ID_UNIDADE'),
+                    mu_residen=record.get('MU_RESIDEN'),
+                    nu_notific=record.get('NU_NOTIFIC'),
+                    dt_notific=record.get('DT_NOTIFIC'),
+                    id_agravo=record.get('ID_AGRAVO'),
+                    nm_pacient=record.get('NM_PACIENT'),
+                )
+                registros_sifi.append(nova_linha)
+
+            elif 'violencia' in nome_arquivo:
+                nova_linha = PacienteViolenciaDomestica(
+                    id_unidade=record.get('ID_UNIDADE'),
+                    nm_ubs=record.get('NM_UBS'),
+                    nu_notific=record.get('NU_NOTIFIC'),
+                )
+                registros_violencia.append(nova_linha)
+
         if registros_dengue:
             PacienteDengue.objects.bulk_create(registros_dengue, ignore_conflicts=True)
         if registros_tubercu:
             PacienteTuberculose.objects.bulk_create(registros_tubercu, ignore_conflicts=True)
+        if registros_sifi.append:
+            PacienteSifilis.objects.bulk_create(registros_sifi, ignore_conflicts=True)
+        if registros_violencia.append:
+            PacienteViolenciaDomestica.objects.bulk_create(registros_violencia, ignore_conflicts=True)
