@@ -24,6 +24,7 @@ class PacienteTuberculose(models.Model):
 
     def __str__(self):
         return f"{self.nm_ubs} - {self.nu_notific}"
+
 class PacienteSifilis(models.Model):
     mu_notific=models.TextField(null=True, blank=True)
     un_saude=models.TextField(null=True, blank=True)

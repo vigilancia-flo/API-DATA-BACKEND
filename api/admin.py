@@ -32,7 +32,6 @@ class UploadDBFAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
 
-        # Pega o nome do arquivo enviado e deixa em minúsculo
         nome_arquivo = os.path.basename(obj.arquivo.name).lower()
 
         table = DBF(obj.arquivo.path, encoding='iso-8859-1', load=True, ignore_missing_memofile=True)
@@ -49,14 +48,12 @@ class UploadDBFAdmin(admin.ModelAdmin):
             except (ValueError, TypeError, AttributeError):
                 return None
 
-        # Listas para guardar os registros antes de salvar
         registros_dengue = []
         registros_tubercu = []
         registros_sifi = []
         registros_violencia = []
 
         for record in table:
-            # SE FOR DENGUE
             if 'deng' in nome_arquivo:
                 partes_endereco = [
                     record.get('NM_LOGRADO'),
@@ -83,7 +80,6 @@ class UploadDBFAdmin(admin.ModelAdmin):
                 )
                 registros_dengue.append(nova_linha)
 
-            # SE FOR TUBERCULOSE
             elif 'tubercu' in nome_arquivo:
                 nova_linha = PacienteTuberculose(
                     id_unidade=record.get('ID_UNIDADE') or record.get('ID_UNID'),
@@ -113,7 +109,6 @@ class UploadDBFAdmin(admin.ModelAdmin):
                 )
                 registros_violencia.append(nova_linha)
 
-        # Salva todos os registros no banco de dados de uma vez só!
         if registros_dengue:
             PacienteDengue.objects.bulk_create(registros_dengue, ignore_conflicts=True)
         if registros_tubercu:

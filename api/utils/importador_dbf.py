@@ -3,7 +3,6 @@ from api.models import PacienteDengue, PacienteTuberculose, PacienteSifilis, Pac
 from dbfread import DBF
 from datetime import datetime
 
-# Dicionário mapeando a chave no nome do arquivo para o Model
 MAPEA_ENDEMIAS = {
     'dengon': PacienteDengue,
     'tubercu': PacienteTuberculose,
@@ -41,7 +40,6 @@ def processar_arquivo_dbf(caminho_arquivo):
 
     for record in tabela_dbf:
 
-        # LÓGICA PARA DENGUE
         if modelo_alvo == PacienteDengue:
             partes_endereco = [
                 record.get('NM_LOGRADO'),
@@ -68,11 +66,10 @@ def processar_arquivo_dbf(caminho_arquivo):
             )
             registros_para_salvar.append(nova_linha)
 
-        # LÓGICA PARA TUBERCULOSE
         elif modelo_alvo == PacienteTuberculose:
             nova_linha = PacienteTuberculose(
                 id_unidade=record.get('ID_UNIDADE') or record.get('ID_UNID'),
-                nm_ubs=record.get('NM_UBS') or record.get('ID_UNIDADE'),  # Ajuste conforme a coluna no seu DBF
+                nm_ubs=record.get('NM_UBS') or record.get('ID_UNIDADE'),
                 nu_notific=record.get('NU_NOTIFIC') or record.get('NU_NOTIFICA'),
             )
             registros_para_salvar.append(nova_linha)
@@ -95,7 +92,6 @@ def processar_arquivo_dbf(caminho_arquivo):
                 nu_notific=record.get('NU_NOTIFIC'),
             )
 
-    # 4. Salvar no banco de dados em lote
     modelo_alvo.objects.bulk_create(registros_para_salvar, ignore_conflicts=True)
 
     return {"status": "sucesso", "registros_inseridos": len(registros_para_salvar)}
