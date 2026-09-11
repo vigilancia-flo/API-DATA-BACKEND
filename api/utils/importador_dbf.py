@@ -1,5 +1,5 @@
 import os
-from api.models import PacienteDengue, PacienteTuberculose  # Importe os models certos
+from api.models import PacienteDengue, PacienteTuberculose, PacienteSifilis
 from dbfread import DBF
 from datetime import datetime
 
@@ -7,6 +7,7 @@ from datetime import datetime
 MAPEA_ENDEMIAS = {
     'dengon': PacienteDengue,
     'tubercu': PacienteTuberculose,
+    'sifi': PacienteSifilis,
 }
 
 

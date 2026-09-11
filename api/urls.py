@@ -6,7 +6,7 @@ from api import views
 router = routers.DefaultRouter()
 router.register(r'dengue', views.PacienteDengueViewSet)
 router.register(r'tuberculose', views.PacienteTuberculoseViewSet)
-
+router.register(r'sifilis', views.PacienteSifilisViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),

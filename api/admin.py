@@ -1,7 +1,7 @@
 import os
 from django.contrib import admin
 from dbfread import DBF
-from .models import PacienteDengue, PacienteTuberculose, UploadDBF
+from .models import PacienteDengue, PacienteTuberculose, PacienteSifilis,UploadDBF
 from datetime import datetime
 
 
@@ -17,6 +17,10 @@ class PacienteTuberculoseAdmin(admin.ModelAdmin):
     list_display = ("id_unidade", "nm_ubs", "nu_notific")
     search_fields = ("id_unidade", "nm_ubs", "nu_notific")
 
+@admin.register(PacienteSifilis)
+class PacienteSifilisAdmin(admin.ModelAdmin):
+    list_display = ("mu_notific", "un_saude", "mu_residen", "nu_notific", "dt_notific", "id_agravo", "nm_pacient")
+    search_fields = ("mu_notific", "un_saude", "mu_residen", "nu_notific", "dt_notific", "id_agravo", "nm_pacient")
 
 @admin.register(UploadDBF)
 class UploadDBFAdmin(admin.ModelAdmin):
@@ -43,6 +47,7 @@ class UploadDBFAdmin(admin.ModelAdmin):
         # Listas para guardar os registros antes de salvar
         registros_dengue = []
         registros_tubercu = []
+        registros_sifi = []
 
         for record in table:
             # SE FOR DENGUE
@@ -81,8 +86,22 @@ class UploadDBFAdmin(admin.ModelAdmin):
                 )
                 registros_tubercu.append(nova_linha)
 
+            elif 'sifi' in nome_arquivo:
+                nova_linha = PacienteSifilis(
+                    mu_notific=record.get('MU_NOTIFIC'),
+                    un_saude=record.get('UN_SADE'),
+                    mu_residen=record.get('MU_RESIDEN'),
+                    nu_notific=record.get('NU_NOTIFIC'),
+                    dt_notific=record.get('DT_NOTIFIC'),
+                    id_agravo=record.get('ID_AGRAVO'),
+                    nm_pacient=record.get('NM_PACIENT'),
+                )
+                registros_sifi.append(nova_linha)
+
         # Salva todos os registros no banco de dados de uma vez só!
         if registros_dengue:
             PacienteDengue.objects.bulk_create(registros_dengue, ignore_conflicts=True)
         if registros_tubercu:
             PacienteTuberculose.objects.bulk_create(registros_tubercu, ignore_conflicts=True)
+        if registros_sifi.append:
+            PacienteSifilis.objects.bulk_create(registros_sifi, ignore_conflicts=True)
