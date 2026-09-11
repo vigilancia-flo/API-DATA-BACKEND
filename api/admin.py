@@ -1,7 +1,7 @@
 import os
 from django.contrib import admin
 from dbfread import DBF
-from .models import PacienteDengue, PacienteTuberculose, PacienteSifilis,UploadDBF
+from .models import PacienteDengue, PacienteTuberculose, PacienteSifilis,UploadDBF, PacienteViolenciaDomestica
 from datetime import datetime
 
 
@@ -19,8 +19,13 @@ class PacienteTuberculoseAdmin(admin.ModelAdmin):
 
 @admin.register(PacienteSifilis)
 class PacienteSifilisAdmin(admin.ModelAdmin):
-    list_display = ("mu_notific", "un_saude", "mu_residen", "nu_notific", "dt_notific", "id_agravo", "nm_pacient")
-    search_fields = ("mu_notific", "un_saude", "mu_residen", "nu_notific", "dt_notific", "id_agravo", "nm_pacient")
+    list_display = ("mu_notific", "un_saude", "nm_ubs", "mu_residen", "nu_notific", "dt_notific", "id_agravo", "nm_pacient")
+    search_fields = ("mu_notific", "un_saude", "nm_ubs", "mu_residen", "nu_notific", "dt_notific", "id_agravo", "nm_pacient")
+
+@admin.register(PacienteViolenciaDomestica)
+class PacienteViolenciaDomesticaAdmin(admin.ModelAdmin):
+    list_display = ("id_unidade", "nm_ubs", "nu_notific")
+    search_fields = ("id_unidade", "nm_ubs", "nu_notific")
 
 @admin.register(UploadDBF)
 class UploadDBFAdmin(admin.ModelAdmin):
@@ -48,6 +53,7 @@ class UploadDBFAdmin(admin.ModelAdmin):
         registros_dengue = []
         registros_tubercu = []
         registros_sifi = []
+        registros_violencia = []
 
         for record in table:
             # SE FOR DENGUE
@@ -90,6 +96,7 @@ class UploadDBFAdmin(admin.ModelAdmin):
                 nova_linha = PacienteSifilis(
                     mu_notific=record.get('MU_NOTIFIC'),
                     un_saude=record.get('UN_SADE'),
+                    nm_ubs=record.get('NM_UBS') or record.get('ID_UNIDADE'),
                     mu_residen=record.get('MU_RESIDEN'),
                     nu_notific=record.get('NU_NOTIFIC'),
                     dt_notific=record.get('DT_NOTIFIC'),
@@ -98,6 +105,14 @@ class UploadDBFAdmin(admin.ModelAdmin):
                 )
                 registros_sifi.append(nova_linha)
 
+            elif 'violencia' in nome_arquivo:
+                nova_linha = PacienteViolenciaDomestica(
+                    id_unidade=record.get('ID_UNIDADE'),
+                    nm_ubs=record.get('NM_UBS'),
+                    nu_notific=record.get('NU_NOTIFIC'),
+                )
+                registros_violencia.append(nova_linha)
+
         # Salva todos os registros no banco de dados de uma vez só!
         if registros_dengue:
             PacienteDengue.objects.bulk_create(registros_dengue, ignore_conflicts=True)
@@ -105,3 +120,5 @@ class UploadDBFAdmin(admin.ModelAdmin):
             PacienteTuberculose.objects.bulk_create(registros_tubercu, ignore_conflicts=True)
         if registros_sifi.append:
             PacienteSifilis.objects.bulk_create(registros_sifi, ignore_conflicts=True)
+        if registros_violencia.append:
+            PacienteViolenciaDomestica.objects.bulk_create(registros_violencia, ignore_conflicts=True)

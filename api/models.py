@@ -27,11 +27,17 @@ class PacienteTuberculose(models.Model):
 class PacienteSifilis(models.Model):
     mu_notific=models.TextField(null=True, blank=True)
     un_saude=models.TextField(null=True, blank=True)
+    nm_ubs = models.TextField(null=True, blank=True)
     mu_residen=models.TextField(null=True, blank=True)
     nu_notific=models.TextField(null=True, blank=True)
     dt_notific=models.DateField(null=True, blank=True)
     id_agravo=models.TextField(null=True, blank=True)
     nm_pacient=models.TextField(null=True, blank=True)
+
+class PacienteViolenciaDomestica(models.Model):
+    id_unidade = models.TextField(null=True, blank=True)
+    nm_ubs = models.TextField(null=True, blank=True)
+    nu_notific = models.TextField(null=True, blank=True)
 
 class UploadDBF(models.Model):
     arquivo = models.FileField(upload_to='dbfs/')
